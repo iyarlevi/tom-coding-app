@@ -11,7 +11,7 @@ const server = http.createServer(app);
 // Setup Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
     methods: ["GET", "POST"],
   },
 });
@@ -41,10 +41,10 @@ io.on("connection", (socket) => {
     socket.join(blockId);
 
     if (!rooms[blockId]) {
-      rooms[blockId] = 0; // Initialize room if it doesn't exist
+      rooms[blockId] = 0;
     }
 
-    rooms[blockId] += 1; // Increment student count in the room
+    rooms[blockId] += 1;
 
     // Emit the updated student count to everyone in the room
     io.to(blockId).emit("studentCount", rooms[blockId]);
@@ -56,15 +56,15 @@ io.on("connection", (socket) => {
     // Handle disconnecting from the room
     socket.on("disconnect", () => {
       if (rooms[blockId]) {
-        rooms[blockId] -= 1; // Decrement student count on disconnect
+        rooms[blockId] -= 1;
         console.log(
           `User left room: ${blockId}, remaining students: ${rooms[blockId]}`
         );
 
         if (rooms[blockId] <= 0) {
-          delete rooms[blockId]; // Delete the room if no students are left
+          delete rooms[blockId];
         } else {
-          io.to(blockId).emit("studentCount", rooms[blockId]); // Update count for remaining students
+          io.to(blockId).emit("studentCount", rooms[blockId]);
         }
       }
 
@@ -73,8 +73,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// MongoDB connection setup
-const dbURI = "mongodb://localhost:27017/codingApp";
+const dbURI = process.env.MONGODB_URI || "mongodb://localhost:27017/codingApp";
 mongoose
   .connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
@@ -83,12 +82,11 @@ mongoose
   })
   .catch((err) => console.log(err));
 
-// Default route
 app.get("/", (req, res) => {
   res.send("Server is up and running");
 });
 
-// Start server
-server.listen(5000, () => {
-  console.log("Server is running on port 5000");
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });

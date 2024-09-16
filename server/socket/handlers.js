@@ -1,5 +1,5 @@
 let codeBlockUsers = {};
-let studentCounts = {}; // Track the number of students in each code block room
+let studentCounts = {};
 
 module.exports = (io) => {
   io.on("connection", (socket) => {
@@ -10,7 +10,7 @@ module.exports = (io) => {
 
       if (!codeBlockUsers[blockId]) {
         codeBlockUsers[blockId] = [];
-        studentCounts[blockId] = 0; // Initialize the student count for this room
+        studentCounts[blockId] = 0;
       }
 
       // Assign role to the user

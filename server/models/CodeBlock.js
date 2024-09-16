@@ -14,8 +14,8 @@ const codeBlockSchema = new mongoose.Schema({
     required: true,
   },
   hints: {
-    type: [String], // Array of hints for the code block
-    default: [], // Default to an empty array if no hints are provided
+    type: [String],
+    default: [],
   },
 });
 
